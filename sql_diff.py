@@ -92,31 +92,34 @@ class Sqldiff(object):
         c = conn.cursor()
         return map(lambda x: x[0], c.execute(self.table_names_qry))
 
+    def get_tables_diff(self):
+        with self.memory_conn as conn:
+            tables = set(self._get_tables(conn))
+            if not {self.tbl1, self.tbl2}.issubset(tables):
+                raise SQLDiffError('Invalid tables names for compare')
+
+            conn.row_factory = dict_factory
+            c = conn.cursor()
+
+            # prepare column names for query
+            t1_cols = tuple(map(itemgetter('name'), c.execute(self.get_colnames.format(t=self.tbl1))))
+            t2_cols = tuple(map(itemgetter('name'), c.execute(self.get_colnames.format(t=self.tbl2))))
+            t1_cols, t2_cols = utils.align_cols(t1_cols, t2_cols)
+
+            diff = c.execute(self.cmp_tables_qry.format(
+                tbl1_alias=self.tbl1,
+                tbl2_alias=self.tbl2,
+                t1=self.tbl1,
+                t2=self.tbl2,
+                t1_cols=','.join(t1_cols),
+                t2_cols=','.join(t2_cols),
+            ))
+            # todo add lambda compatibility here
+            self.totals = utils.index(diff, ('id',))
+
     def get_diff_lines(self):
         if self.memory_mode:
-            with self.memory_conn as conn:
-                tables = set(self._get_tables(conn))
-                if not {self.tbl1, self.tbl2}.issubset(tables):
-                    raise SQLDiffError('Invalid tables names for compare')
-
-                conn.row_factory = dict_factory
-                c = conn.cursor()
-
-                # prepare column names for query
-                t1_cols = tuple(map(itemgetter('name'), c.execute(self.get_colnames.format(t=self.tbl1))))
-                t2_cols = tuple(map(itemgetter('name'), c.execute(self.get_colnames.format(t=self.tbl2))))
-                t1_cols, t2_cols = utils.align_cols(t1_cols, t2_cols)
-
-                diff = c.execute(self.cmp_tables_qry.format(
-                    tbl1_alias=self.tbl1,
-                    tbl2_alias=self.tbl2,
-                    t1=self.tbl1,
-                    t2=self.tbl2,
-                    t1_cols=','.join(t1_cols),
-                    t2_cols=','.join(t2_cols),
-                ))
-                # todo add lambda compatibility here
-                self.totals = utils.index(diff, ('id',))
+            self.get_tables_diff()
         else:
             for db_name in self._get_dbs():
                 if db_name in self.ignored_files: continue
@@ -140,6 +143,7 @@ class Sqldiff(object):
         return self.diff_data
 
     def get_diff_columns(self, data):
+        """show only diff columns for each diff line."""
         d = defaultdict(list)
         od = OrderedDict
         for row_idx, vals in data.items():

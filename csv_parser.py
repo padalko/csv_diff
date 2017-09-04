@@ -90,6 +90,9 @@ class CsvReader(object):
                     # transform_data
                     line['file_name'] = self.filename
                     line['line_no'] = idx
+                    # todo make update for additional headers
+                    # self.headers['file_name'] = 'str'
+                    # self.headers['line_no'] = 'int'
                     self.data.append(line)
         except Exception as e:
             raise CSVReadError(

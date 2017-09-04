@@ -1,3 +1,5 @@
+import os
+import inspect
 from itertools import zip_longest, tee
 from operator import itemgetter
 
@@ -6,7 +8,7 @@ def analyze_outputs(*files):
     diff_cols = set()
     for file in files:
         diff_cols.symmetric_difference_update(set(file.headers.keys()))
-    d_cols_msg = 'Different column names was found: {0}.'.format(', '.join(diff_cols))
+    d_cols_msg = 'WARNING! Different column names were found: {0}.'.format(', '.join(diff_cols))
     d_lines_no_msg = 'Invalid lines number in provided files found!\n'
     check_lines = any(len(f) != len(files[0]) for f in files)
     if check_lines:
@@ -61,6 +63,7 @@ def index(dataList, indexKeys, sortKeys=None, reverseSort=False, uniqueValues=Fa
     return indexedData
 
 
+# todo fix it to make smart merge
 def align_cols(l1, l2, fill='null'):
     ov = []
     alias = 'null as {col}'
@@ -73,3 +76,8 @@ def align_cols(l1, l2, fill='null'):
             if r != fill:
                 ov.append((alias.format(fill=fill, col=r), r))
     return (tuple(map(itemgetter(x), tee(ov)[x])) for x in range(2))
+
+
+def get_proj_dir():
+    curfile = inspect.getfile(inspect.currentframe())
+    return os.path.dirname(os.path.abspath(curfile))
