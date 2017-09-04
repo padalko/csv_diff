@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        {% block style %}
+            <link rel="stylesheet" media="screen" href="static/css/bootstrap.min.css">
+        {% endblock %}
+        {% block js %}
+        {% endblock %}
+    </head>
+    <body class="body-base">{% block body %}{% endblock %}</body>
+</html>
