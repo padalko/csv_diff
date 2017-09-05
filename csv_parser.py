@@ -21,7 +21,7 @@ class CsvReader(object):
     )
     create_table_qry = """
     CREATE TABLE {tbl_name} 
-    (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    (line_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     {col_types})"""
 
     insert_table_qry = """

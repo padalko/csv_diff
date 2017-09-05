@@ -26,7 +26,7 @@ class Sqldiff(object):
     get_colnames = "pragma TABLE_INFO({t})"
 
     cmp_tables_qry = """
-    SELECT  '{tbl1_alias} ' || id AS Diff, *
+    SELECT  '{tbl1_alias}:' || line_id AS Diff, *
     FROM
       (SELECT {t1_cols}
          FROM {t1}
@@ -34,13 +34,13 @@ class Sqldiff(object):
        SELECT {t2_cols}
          FROM {t2})
     UNION ALL
-    SELECT  '{tbl2_alias} ' || id AS Diff, *
+    SELECT  '{tbl2_alias}:' || line_id AS Diff, *
     FROM
       (SELECT {t2_cols}
          FROM {t2}
        EXCEPT
        SELECT {t1_cols}
-        FROM {t1});
+        FROM {t1}) ORDER by line_id;
     """
 
     table_names_qry = """select tbl_name
@@ -115,7 +115,7 @@ class Sqldiff(object):
                 t2_cols=','.join(t2_cols),
             ))
             # todo add lambda compatibility here
-            self.totals = utils.index(diff, ('id',))
+            self.totals = utils.index(diff, ('line_id',))
 
     def get_diff_lines(self):
         if self.memory_mode:
