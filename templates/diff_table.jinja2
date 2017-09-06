@@ -1,5 +1,5 @@
 {% extends 'index.jinja2' %}
-{% block title %}Header Sample{% endblock %}
+{% block title %}Diff{% endblock %}
 {% block body %}
     <h1>Diff</h1>
     <table class="table table-bordered table-responsive">
@@ -10,17 +10,6 @@
             {% endfor %}
         </tr>
     </thead>
-{#    <tbody>#}
-{#        {% for line_diff_id in data %}#}
-{#           {% for line_head in data[line_diff_id] %}#}
-{#               <tr>#}
-{#                   {% for cell in line_head %}#}
-{#                       <td>{{ line_head[cell] }}</td>#}
-{#                   {% endfor %}#}
-{#               </tr>#}
-{#           {% endfor %}#}
-{#        {% endfor %}#}
-{#    </tbody>#}
     <tbody>
         {% for line_diff_id in data %}
            {% for line_head in data[line_diff_id] %}

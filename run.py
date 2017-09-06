@@ -81,10 +81,10 @@ if __name__ == '__main__':
         options['filename{}'.format(n)] = fname
     for n, t_name in enumerate(args.tables or args.files, 1):
         options['tbl{}_name'.format(n)] = '{f}'.format(f=os.path.basename(t_name).split('.')[0])
-    # print(options)
 
     # test launch
     from app import TEMPLATES_DIR
+
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR))
     template = env.get_template('diff_table.jinja2')
     data = compare(**options)
@@ -92,11 +92,12 @@ if __name__ == '__main__':
 
     call_dir = os.path.abspath(os.curdir)
     html_f_name = 'diff_{tbl1_name}_{tbl2_name}.html'.format(**options)
-    outfile_full_path = os.path.join(call_dir, html_f_name)
 
+    outfile_full_path = os.path.join(call_dir, html_f_name)
     if os.path.exists(outfile_full_path):
         html_f_name = '.'.join((html_f_name.split('.')[0] + str(int(time.time())), 'html'))
     with open(html_f_name, 'w') as outfile:
         outfile.write(html_diff)
+    outfile_full_path = os.path.join(call_dir, html_f_name)
 
     webbrowser.open('file://' + outfile_full_path)

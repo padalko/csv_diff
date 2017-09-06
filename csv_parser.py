@@ -43,7 +43,8 @@ class CsvReader(object):
 
     def _read_headers(self):
         for h in islice(self.lines, 1).__next__():
-            self.headers[h] = self.DEF_FORMAT
+            sanitized_headers = h.replace(' ', '_')
+            self.headers[sanitized_headers] = self.DEF_FORMAT
 
     def _parse(self, line, parse_header_types=False):
         parsed = []
