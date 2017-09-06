@@ -1,5 +1,5 @@
-head_text,head_int,head_float,head_dt,HZ
-textdata,11,77.44000000001,2010-01-01,a
-stringg,22,66.55,2010-01-01,s
-chars,765654,888.00,0,s
-NEW,999999999999999,88777777778.00,0,a
+head_text,head_int,ololo,head_float,head_dt,HZ
+textdata,11,22,77.44000000001,2010-01-01,a
+stringg,22,141,66.55,2010-01-01,s
+chars,765654,555,888.00,0,s
+NEW,999999999999999,0g.w,88777777778.00,0,a

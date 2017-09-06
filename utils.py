@@ -63,19 +63,19 @@ def index(dataList, indexKeys, sortKeys=None, reverseSort=False, uniqueValues=Fa
     return indexedData
 
 
-# todo fix it to make smart merge
-def align_cols(l1, l2, fill='null'):
+def align_cols(l1, l2):
     ov = []
+    ordmap = {v: i for i, v in enumerate(l1)}
+    srt = lambda x: ordmap.get(x, len(sl | sr))
     alias = 'null as {col}'
-    for l, r in zip_longest(l1, l2, fillvalue=fill):
-        if l == r:
-            ov.append((l, r))
-        else:
-            if l != fill:
-                ov.append((l, alias.format(fill=fill, col=l)))
-            if r != fill:
-                ov.append((alias.format(fill=fill, col=r), r))
-    return (tuple(map(itemgetter(x), tee(ov)[x])) for x in range(2))
+    sl, sr = set(l1), set(l2)
+    for c in sl & sr:
+        ov.append((c, c))
+    for u1 in sl - sr:
+        ov.append((u1, alias.format(col=u1)))
+    for u2 in sr - sl:
+        ov.append((alias.format(col=u2), u2))
+    return tuple(sorted(map(itemgetter(x), tee(ov)[x]), key=srt) for x in range(2))
 
 
 def get_proj_dir():
